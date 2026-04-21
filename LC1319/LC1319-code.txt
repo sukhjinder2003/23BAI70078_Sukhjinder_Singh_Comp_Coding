@@ -1,0 +1,53 @@
+class Solution {
+public:
+
+    vector<int>rank;
+    vector<int>parent;
+
+    int find(int ele){
+        if(ele==parent[ele]) return ele;
+        return parent[ele]=find(parent[ele]);
+    }
+
+    void Union(int x,int y){
+
+        int xParent=find(x);
+        int yParent=find(y);
+
+        if(xParent==yParent) return;
+
+        if(rank[xParent]>rank[yParent]){
+            parent[yParent]=xParent;
+        }
+        else if(rank[xParent]<rank[yParent]){
+            parent[xParent]=yParent;
+        }
+        else{
+            parent[yParent]=xParent;
+            rank[xParent]++;
+        }
+    }
+
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        int m=connections.size();
+        if(m<n-1) return -1;
+
+        for(int i=0;i<n;i++){
+            parent.push_back(i);
+            rank.push_back(1);
+        }
+
+        for(int i=0;i<m;i++){
+            Union(connections[i][0],connections[i][1]);
+        }
+
+        unordered_set<int>st;
+
+        for(int i=0;i<n;i++){
+            st.insert(find(i));
+        }
+
+        return st.size()-1;
+        
+    }
+};
